@@ -1,0 +1,20 @@
+{
+  "name": "edgarez/tfabundle",
+  "description": "TFA Bundle",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Emmanuel Drouet",
+      "homepage": "http://emmanuel-drouet.me"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.3.3"
+  },
+  "autoload": {
+    "psr-0": {"EdgarEz\\TFABundle": ""}
+  },
+  "target-dir": "EdgarEz/TFABundle"
+}
+
