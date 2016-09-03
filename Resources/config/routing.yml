@@ -1,0 +1,3 @@
+tfa_email:
+    resource: "@EdgarEzTFABundle/Resources/config/routing_email.yml"
+    prefix: /email

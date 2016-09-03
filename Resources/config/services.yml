@@ -1,0 +1,33 @@
+parameters:
+    edgareztfa.provider.email.class: EdgarEz\TFABundle\Provider\Email\EmailProvider
+    edgareztfa.email.controller.auth_form.class: EdgarEz\TFABundle\Provider\Email\Controller\AuthController
+    edgareztfa.listener.class: EdgarEz\TFABundle\EventListener\TFAListener
+    edgareztfa.security.auth_handler.class: EdgarEz\TFABundle\Security\AuthHandler
+
+services:
+    edgareztfa.provider.email:
+        class: %edgareztfa.provider.email.class%
+        tags:
+            - { name: edgareztfa.provider, alias: email }
+
+    edgareztfa.security.auth_handler:
+        class: %edgareztfa.security.auth_handler.class%
+        arguments:
+            - $provider;edgar_ez_tfa$
+
+    edgareztfa.listener:
+        class: %edgareztfa.listener.class%
+        arguments:
+            - @security.token_storage
+            - @security.access.decision_manager
+            - @edgareztfa.security.auth_handler
+        tags:
+            - { name: kernel.event_subscriber }
+
+    edgareztfa.email.controller.auth_form:
+        class: %edgareztfa.email.controller.auth_form.class%
+        arguments:
+            - @security.token_storage
+        parent: ezpublish.controller.base
+
+
