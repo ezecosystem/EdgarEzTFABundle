@@ -15,11 +15,12 @@ composer require edgarez/tfabundle
 To start using the bundle, register the bundle in your application's kernel class:
 
 ```php
-// ezpublish/EzPublishKernel.php
+// app/AppKernel.php
 public function registerBundles()
 {
     $bundles = array(
         // ...
+        new JMS\TranslationBundle\JMSTranslationBundle(),
         new EdgarEz\TFABundle\EdgarEzTFABundle(),
         // ...
     );
@@ -29,7 +30,7 @@ public function registerBundles()
 ## Configure bundle
 
 ```yaml
-# ezpublish/config/config.yml
+# app/config/config.yml
 edgar_ez_tfa:
     system:
         acme_site: # TFA is activated only for this siteaccess
@@ -42,6 +43,15 @@ edgar_ez_tfa:
 Note:
  
 * don't activate TFA for all site, specially for back-office siteaccess : we are working to enable TFA for eZ Platform Back-Office 
+
+## Routing
+
+```yaml
+# app/config/routing.yml
+tfa_auth:
+    resource: "@EdgarEzTFABundle/Resources/config/routing.yml"
+    prefix:   /_tfa
+```
 
 ## Role and policy
 
