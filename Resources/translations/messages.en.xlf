@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
+  <file date="2016-09-05T12:58:31Z" source-language="en" target-language="en" datatype="plaintext" original="not.available">
+    <header>
+      <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
+      <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
+    </header>
+    <body>
+      <trans-unit id="f7b37f155f14e09f004d813750f5f222f07cae24" resname="        Enter your Two Factor Authentication code you have received by mail&#10;        ">
+        <source xml:space="preserve">        Enter your Two Factor Authentication code you have received by mail
+        </source>
+        <target xml:space="preserve" state="new">        Enter your Two Factor Authentication code you have received by mail
+        </target>
+        <jms:reference-file line="5">/../src/EdgarEz/TFABundle/Resources/views/tfa/email/auth.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="2f7b1a60a74ae662089312a20e90169cabf320c9" resname="Two Factor Authentication code">
+        <source>Two Factor Authentication code</source>
+        <target state="new">Two Factor Authentication code</target>
+        <jms:reference-file line="105">/../src/EdgarEz/TFABundle/Provider/Email/Controller/AuthController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="8f6a67f7a1def87df2d2dcfbab1ae361858b5bcd" resname="Your Two Factor Authentication code : %code%&#10;">
+        <source xml:space="preserve">Your Two Factor Authentication code : %code%
+</source>
+        <target xml:space="preserve" state="new">Your Two Factor Authentication code : %code%
+</target>
+        <jms:reference-file line="1">/../src/EdgarEz/TFABundle/Resources/views/tfa/email/mail.txt.twig</jms:reference-file>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -28,6 +28,11 @@ services:
         class: %edgareztfa.email.controller.auth_form.class%
         arguments:
             - @security.token_storage
+            - @ezpublish.config.resolver
+            - @mailer
+            - @translator
+        calls:
+            - [setProviders, [$providers;edgar_ez_tfa$]]
         parent: ezpublish.controller.base
 
 

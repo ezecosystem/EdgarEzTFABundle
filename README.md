@@ -7,6 +7,10 @@
 
 eZ Platform Two Factor Authentication bundle
 
-> This bundle is currently in dev
+> This bundle is inspired from scheb/two-factor-bundle
+
+## Documentation
+
+[Documentation](Resources/doc/README.md)
 
 [TODO](TODO.md)

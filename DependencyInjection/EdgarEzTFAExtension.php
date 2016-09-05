@@ -29,5 +29,6 @@ class EdgarEzTFAExtension extends Extension
 
         $processor = new ConfigurationProcessor($container, 'edgar_ez_tfa');
         $processor->mapSetting('provider', $config);
+        $processor->mapSetting('providers', $config);
     }
 }
