@@ -40,16 +40,13 @@ class AuthController extends Controller
         TokenStorage $tokenStorage,
         ConfigResolverInterface $configResolver,
         \Swift_Mailer $mailer,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        array $providers
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->configResolver = $configResolver;
         $this->mailer = $mailer;
         $this->translator = $translator;
-    }
-
-    public function setProviders(array $providers)
-    {
         $this->providers = $providers;
     }
 
@@ -69,7 +66,11 @@ class AuthController extends Controller
         $emailTo = $user->getAPIUser()->email;
         $emailFrom = $this->providers['email']['from'];
 
-        $this->sendCode($code, $emailFrom, $emailTo);
+        $codeSended = $session->get('tfa_codesended', false);
+        if (!$codeSended) {
+            $this->sendCode($code, $emailFrom, $emailTo);
+            $session->set('tfa_codesended', true);
+        }
 
         return $this->render('EdgarEzTFABundle:tfa:email/auth.html.twig', [
             'layout' => $this->configResolver->getParameter('pagelayout')
@@ -94,7 +95,7 @@ class AuthController extends Controller
             $session->set('tfa_authenticated', true);
             return new RedirectResponse($session->get('tfa_redirecturi'));
         } else {
-            return $this->redirectToRoute('tfa_auth_form');
+            return $this->redirectToRoute('tfa_email_auth_form');
         }
     }
 

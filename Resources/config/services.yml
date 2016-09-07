@@ -31,8 +31,7 @@ services:
             - @ezpublish.config.resolver
             - @mailer
             - @translator
-        calls:
-            - [setProviders, [$providers;edgar_ez_tfa$]]
+            - $providers;edgar_ez_tfa$
         parent: ezpublish.controller.base
 
 
