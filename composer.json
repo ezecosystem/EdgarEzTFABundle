@@ -1,5 +1,6 @@
 {
   "name": "edgarez/tfabundle",
+  "type": "ezplatform-bundle",
   "description": "TFA Bundle",
   "license": "GPL-3.0",
   "authors": [
@@ -10,8 +11,8 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": ">=5.3.3",
-    "jms/translation-bundle": "^1.3"
+    "php": "~5.6|~7.0",
+    "ezsystems/ezplatform": "^1.7"
   },
   "autoload": {
     "psr-0": {"EdgarEz\\TFABundle": ""}
