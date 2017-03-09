@@ -20,7 +20,6 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new JMS\TranslationBundle\JMSTranslationBundle(),
         new EdgarEz\TFABundle\EdgarEzTFABundle(),
         // ...
     );

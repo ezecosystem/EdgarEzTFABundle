@@ -1,0 +1,13 @@
+{% extends layout %}
+
+{% block content %}
+    <p>
+        {% trans %}
+        Enter your Two Factor Authentication code you have received by sms
+        {% endtrans %}
+    </p>
+    <form method="post" action="{{ path('tfa_email_auth_check') }}">
+        <input type="text" name="code" value="" />
+        <input type="submit" />
+    </form>
+{% endblock %}

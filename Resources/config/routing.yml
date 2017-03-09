@@ -1,3 +1,7 @@
 tfa_email:
     resource: "@EdgarEzTFABundle/Resources/config/routing_email.yml"
     prefix: /email
+
+tfa_sms:
+    resource: "@EdgarEzTFABundle/Resources/config/routing_sms.yml"
+    prefix: /sms

@@ -22,4 +22,21 @@ class ProviderAbstract
         $session = $request->getSession();
         return $session->get('tfa_authenticated', false);
     }
+
+    /**
+     * Return siteaccess host
+     *
+     * @param Request $request
+     * @return string
+     */
+    protected function getSiteaccessUrl(Request $request)
+    {
+        $semanticPathinfo = $request->attributes->get('semanticPathinfo') ?: '/';
+        $semanticPathinfo = rtrim($semanticPathinfo, '/');
+        $uri = $request->getUri();
+        if (!$semanticPathinfo)
+            return $uri;
+
+        return substr($uri, 0, -strlen($semanticPathinfo));
+    }
 }

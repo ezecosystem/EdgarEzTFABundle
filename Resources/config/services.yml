@@ -1,6 +1,8 @@
 parameters:
     edgareztfa.provider.email.class: EdgarEz\TFABundle\Provider\Email\EmailProvider
+    edgareztfa.provider.sms.class: EdgarEz\TFABundle\Provider\SMS\SMSProvider
     edgareztfa.email.controller.auth_form.class: EdgarEz\TFABundle\Provider\Email\Controller\AuthController
+    edgareztfa.sms.controller.auth_form.class: EdgarEz\TFABundle\Provider\SMS\Controller\AuthController
     edgareztfa.listener.class: EdgarEz\TFABundle\EventListener\TFAListener
     edgareztfa.security.auth_handler.class: EdgarEz\TFABundle\Security\AuthHandler
 
@@ -9,6 +11,11 @@ services:
         class: %edgareztfa.provider.email.class%
         tags:
             - { name: edgareztfa.provider, alias: email }
+
+    edgareztfa.provider.sms:
+        class: %edgareztfa.provider.sms.class%
+        tags:
+            - { name: edgareztfa.provider, alias: sms }
 
     edgareztfa.security.auth_handler:
         class: %edgareztfa.security.auth_handler.class%
@@ -34,4 +41,11 @@ services:
             - $providers;edgar_ez_tfa$
         parent: ezpublish.controller.base
 
-
+    edgareztfa.sms.controller.auth_form:
+        class: %edgareztfa.sms.controller.auth_form.class%
+        arguments:
+            - @security.token_storage
+            - @ezpublish.config.resolver
+            - @translator
+            - $providers;edgar_ez_tfa$
+        parent: ezpublish.controller.base

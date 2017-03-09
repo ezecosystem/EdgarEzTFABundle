@@ -1,16 +1,12 @@
 <?php
 
-namespace EdgarEz\TFABundle\Provider\Email;
+namespace EdgarEz\TFABundle\Provider\SMS;
 
 use EdgarEz\TFABundle\Provider\ProviderAbstract;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Class EmailProvider
- * @package EdgarEz\TFABundle\Provider\Email
- */
-class EmailProvider extends ProviderAbstract implements ProviderInterface
+class SMSProvider extends ProviderAbstract implements ProviderInterface
 {
     /**
      * Return url to request auth code
@@ -26,7 +22,7 @@ class EmailProvider extends ProviderAbstract implements ProviderInterface
         $session->set('tfa_redirecturi', $request->getUri());
 
         $siteaccessUrl = $this->getSiteaccessUrl($request);
-        $redirectUrl = $siteaccessUrl . '/_tfa/email/auth';
+        $redirectUrl = $siteaccessUrl . '/_tfa/sms/auth';
 
         return $redirectUrl;
     }
