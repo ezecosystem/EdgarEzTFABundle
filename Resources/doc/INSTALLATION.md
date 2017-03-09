@@ -28,6 +28,12 @@ public function registerBundles()
 
 ## Configure bundle
 
+Two providers are natively available:
+* email
+* sms
+
+### email provider configuration
+
 ```yaml
 # app/config/config.yml
 edgar_ez_tfa:
@@ -39,8 +45,27 @@ edgar_ez_tfa:
                     from: no-spam@your.mail # email provider sender mail
 ```
 
-Note:
- 
+### SMS Provider configuration
+
+Subscribe to OVH SMS Service to obtain api keys
+
+https://www.ovhtelecom.fr/sms/#order-SMS
+
+```yaml
+# app/config/config.yml
+edgar_ez_tfa:
+    system:
+        acme_site: # TFA is activated only for this siteaccess
+            provider: sms # TFA provider type
+            providers:
+                sms:
+                    application_key: <ovh_application_key>
+                    application_secret: <ovh_application_secret>
+                    customer_key: <ovh_customer_key>                    
+```
+
+Notes:
+* for sms provider, add __phone_number__ text line field type to your User Content Class and add valid phone number to your user content : +<prefix>><phone_number_0_left_trimed>
 * don't activate TFA for all site, specially for back-office siteaccess : we are working to enable TFA for eZ Platform Back-Office 
 
 ## Routing

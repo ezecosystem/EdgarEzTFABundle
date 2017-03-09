@@ -9,6 +9,8 @@ eZ Platform Two Factor Authentication bundle
 
 > This bundle is inspired from scheb/two-factor-bundle
 
+> This bundle is a prototype. Next evolution would be to let Users subscribe to TFA provider in a security page
+
 ## Documentation
 
 [Documentation](Resources/doc/README.md)
