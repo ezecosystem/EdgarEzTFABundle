@@ -85,7 +85,7 @@ class AuthController extends Controller
             $this->providers['sms']['application_key'],
             $this->providers['sms']['application_secret'],
             $endpoint,
-            $this->providers['sms']['customer_key']
+            $this->providers['sms']['consumer_key']
         );
 
         $message = $this->renderView(

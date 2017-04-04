@@ -51,6 +51,11 @@ Subscribe to OVH SMS Service to obtain api keys
 
 https://www.ovhtelecom.fr/sms/#order-SMS
 
+Go to API key page to generate application and consumer keys
+
+https://api.ovh.com/createToken/
+
+
 ```yaml
 # app/config/config.yml
 edgar_ez_tfa:
@@ -61,7 +66,7 @@ edgar_ez_tfa:
                 sms:
                     application_key: <ovh_application_key>
                     application_secret: <ovh_application_secret>
-                    customer_key: <ovh_customer_key>                    
+                    consumer_key: <ovh_consumer_key>                    
 ```
 
 Notes:
