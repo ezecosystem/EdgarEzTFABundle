@@ -1,0 +1,18 @@
+EdgarEz\TFABundle\Entity\TFATrusted:
+    type: entity
+    table: edgarez_tfa_trusted
+    repositoryClass: EdgarEz\TFABundle\Repository\TFATrustedRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            column: user_id
+        ip:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

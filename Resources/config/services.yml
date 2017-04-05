@@ -2,9 +2,12 @@ parameters:
     edgareztfa.provider.email.class: EdgarEz\TFABundle\Provider\Email\EmailProvider
     edgareztfa.provider.sms.class: EdgarEz\TFABundle\Provider\SMS\SMSProvider
     edgareztfa.email.controller.auth_form.class: EdgarEz\TFABundle\Provider\Email\Controller\AuthController
+    edgareztfa.sms.controller.register.class: EdgarEz\TFABundle\Provider\SMS\Controller\RegisterController
     edgareztfa.sms.controller.auth_form.class: EdgarEz\TFABundle\Provider\SMS\Controller\AuthController
     edgareztfa.listener.class: EdgarEz\TFABundle\EventListener\TFAListener
     edgareztfa.security.auth_handler.class: EdgarEz\TFABundle\Security\AuthHandler
+
+    edgareztfa_tfa_controller.class: EdgarEz\TFABundle\Controller\TFAController
 
 services:
     edgareztfa.provider.email:
@@ -14,6 +17,8 @@ services:
 
     edgareztfa.provider.sms:
         class: %edgareztfa.provider.sms.class%
+        arguments:
+            - @hautelook.router.template
         tags:
             - { name: edgareztfa.provider, alias: sms }
 
@@ -31,6 +36,15 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    edgareztfa_tfa_controller:
+        class: %edgareztfa_tfa_controller.class%
+        arguments:
+            - @security.token_storage
+            - @ezpublish.config.resolver
+            - @edgareztfa.security.auth_handler
+            - @doctrine
+        parent: ezpublish.controller.base
+
     edgareztfa.email.controller.auth_form:
         class: %edgareztfa.email.controller.auth_form.class%
         arguments:
@@ -39,6 +53,15 @@ services:
             - @mailer
             - @translator
             - $providers;edgar_ez_tfa$
+        parent: ezpublish.controller.base
+
+    edgareztfa.sms.controller.register:
+        class: %edgareztfa.sms.controller.register.class%
+        arguments:
+            - @ezpublish.config.resolver
+            - @security.token_storage
+            - @doctrine
+            - @edgareztfa.provider.sms
         parent: ezpublish.controller.base
 
     edgareztfa.sms.controller.auth_form:

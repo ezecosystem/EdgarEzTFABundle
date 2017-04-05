@@ -9,6 +9,15 @@ your eZPlatform project:
 composer require edgarez/tfabundle
 ```
 
+## Add Doctrine ORM support
+
+edit your ezplatform.yml
+
+```yaml
+doctrine:
+    orm:
+        auto_mapping: true
+```
 
 ## Enable the bundle
 

@@ -30,4 +30,19 @@ class EmailProvider extends ProviderAbstract implements ProviderInterface
 
         return $redirectUrl;
     }
+
+    public function getIdentifier()
+    {
+        return 'email';
+    }
+
+    public function getName()
+    {
+        return 'Email Provider';
+    }
+
+    public function getDescription()
+    {
+        return 'description provider email';
+    }
 }

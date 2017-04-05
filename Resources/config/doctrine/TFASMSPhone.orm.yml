@@ -1,0 +1,19 @@
+EdgarEz\TFABundle\Entity\TFASMSPhone:
+    type: entity
+    table: edgarez_tfa_sms_phone
+    repositoryClass: EdgarEz\TFABundle\Repository\TFASMSPhoneRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            unique: true
+            column: user_id
+        phone:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

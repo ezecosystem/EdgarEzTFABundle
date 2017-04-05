@@ -3,6 +3,7 @@
 namespace EdgarEz\TFABundle\Security;
 
 use EdgarEz\TFABundle\Provider\ProviderInterface;
+use EdgarEz\TFABundle\Repository\TFARepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,6 +36,11 @@ class AuthHandler implements ProviderInterface
         $this->providers[$alias] = $provider;
     }
 
+    public function getProviders()
+    {
+        return $this->providers;
+    }
+
     /**
      * @param Request $request
      * @return bool
@@ -58,4 +64,26 @@ class AuthHandler implements ProviderInterface
 
         return $this->providers[$this->providerAlias]->requestAuthCode($request);
     }
+
+    public function register(TFARepository $tfaRepository, $userId, $provider)
+    {
+        return null;
+    }
+
+    public function getIdentifier()
+    {
+        return null;
+    }
+
+    public function getName()
+    {
+        return null;
+    }
+
+    public function getDescription()
+    {
+        return null;
+    }
+
+
 }

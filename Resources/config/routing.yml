@@ -1,7 +1,26 @@
-tfa_email:
+tfa_list:
+    path: /list
+    methods: [GET]
+    defaults: { _controller: edgareztfa_tfa_controller:listAction }
+
+tfa_click:
+    path: /click/{provider}
+    methods: [GET]
+    defaults: { _controller: edgareztfa_tfa_controller:clickAction }
+    requirements:
+        provider: "[a-z]+"
+
+tfa_registered:
+    path: /registered/{provider}
+    methods: [GET]
+    defaults: { _controller: edgareztfa_tfa_controller:registeredAction }
+    requirements:
+        provider: "[a-z]+"
+
+tfa_provider_email:
     resource: "@EdgarEzTFABundle/Resources/config/routing_email.yml"
     prefix: /email
 
-tfa_sms:
+tfa_provider_sms:
     resource: "@EdgarEzTFABundle/Resources/config/routing_sms.yml"
     prefix: /sms

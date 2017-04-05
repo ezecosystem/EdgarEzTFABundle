@@ -1,0 +1,12 @@
+{% extends layout %}
+
+{% block content %}
+    {% for providerId, provider in providersList %}
+        {% if provider.selected %}
+            {{ provider.title }}
+        {% else %}
+            <a href="{{ path('tfa_click', {'provider': providerId}) }}">{{ provider.title }}</a>
+        {% endif %}
+        <p>{{ provider.description }}</p>
+    {% endfor %}
+{% endblock %}

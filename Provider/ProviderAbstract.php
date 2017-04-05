@@ -2,6 +2,7 @@
 
 namespace EdgarEz\TFABundle\Provider;
 
+use EdgarEz\TFABundle\Repository\TFARepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -38,5 +39,15 @@ class ProviderAbstract
             return $uri;
 
         return substr($uri, 0, -strlen($semanticPathinfo));
+    }
+
+    public function register(
+        TFARepository $tfaRepository,
+        $userId, $provider
+    )
+    {
+        $tfaRepository->setProvider($userId, $provider);
+
+        return null;
     }
 }
