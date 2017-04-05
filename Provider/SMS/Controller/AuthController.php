@@ -4,6 +4,9 @@ namespace EdgarEz\TFABundle\Provider\SMS\Controller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use EdgarEz\TFABundle\Entity\TFASMSPhone;
+use EdgarEz\TFABundle\Provider\SMS\Data\Mapper\AuthMapper;
+use EdgarEz\TFABundle\Provider\SMS\Form\Type\AuthType;
+use EdgarEz\TFABundle\Provider\SMS\Values\API\Auth;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
 use eZ\Publish\Core\FieldType\TextLine\Value;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -53,35 +56,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Ask for TFA code authentication
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function authAction(Request $request)
-    {
-        $session = $request->getSession();
-        $code = $session->get('tfa_authcode', false);
-
-        /** @var User $user */
-        $user = $this->tokenStorage->getToken()->getUser();
-        $apiUser = $user->getAPIUser();
-
-        /** @var TFASMSPhone $userPhone */
-        $userPhone = $this->tfaSMSPhoneRepository->findOneByUserId($apiUser->id);
-
-        $codeSended = $session->get('tfa_codesended', false);
-        if (!$codeSended) {
-            $this->sendCode($code, $userPhone->getPhone());
-            $session->set('tfa_codesended', true);
-        }
-
-        return $this->render('EdgarEzTFABundle:tfa:sms/auth.html.twig', [
-            'layout' => $this->configResolver->getParameter('pagelayout')
-        ]);
-    }
-
-    /**
      * Send SMS Code
      *
      * @param string $code SMS code
@@ -120,25 +94,51 @@ class AuthController extends Controller
         $smsConn->post('/sms/'. $smsServices[0] . '/jobs/', $content);
     }
 
-    /**
-     * Check for TFA code authentication
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function checkAction(Request $request)
+    public function authAction(Request $request)
     {
-        $session = $request->getSession();
-        $code = null;
+        $actionUrl = $this->generateUrl('tfa_sms_auth_form');
 
-        $TFACode = $session->get('tfa_authcode', false);
-        $code = $request->get('code');
+        $auth = new Auth();
+        $data = (new AuthMapper())->mapToFormData($auth);
+        $form = $this->createForm(AuthType::class, $data);
 
-        if ($code && $code == $TFACode) {
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $session = $request->getSession();
+            $code = null;
+
+            $TFACode = $session->get('tfa_authcode', false);
+            $code = (int)$data->code;
+
+            if ($code !== $TFACode) {
+                return $this->redirectToRoute('tfa_sms_auth_form');
+            }
+
             $session->set('tfa_authenticated', true);
             return new RedirectResponse($session->get('tfa_redirecturi'));
-        } else {
-            return $this->redirectToRoute('tfa_sms_auth_form');
         }
+
+        $session = $request->getSession();
+        $code = $session->get('tfa_authcode', false);
+
+        /** @var User $user */
+        $user = $this->tokenStorage->getToken()->getUser();
+        $apiUser = $user->getAPIUser();
+
+        /** @var TFASMSPhone $userPhone */
+        $userPhone = $this->tfaSMSPhoneRepository->findOneByUserId($apiUser->id);
+
+        $codeSended = $session->get('tfa_codesended', false);
+        if (!$codeSended) {
+            $this->sendCode($code, $userPhone->getPhone());
+            $session->set('tfa_codesended', true);
+        }
+
+        return $this->render('EdgarEzTFABundle:tfa:sms/auth.html.twig', [
+            'layout' => $this->configResolver->getParameter('pagelayout'),
+            'form' => $form->createView(),
+            'auth' => $data,
+            'actionUrl' => $actionUrl
+        ]);
     }
 }

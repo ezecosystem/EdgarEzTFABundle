@@ -5,10 +5,6 @@ tfa_sms_register_form:
 
 tfa_sms_auth_form:
     path: /auth
-    methods: [GET]
+    methods: [GET, POST]
     defaults: { _controller: edgareztfa.sms.controller.auth_form:authAction }
 
-tfa_sms_auth_check:
-    path: /check
-    methods: [POST]
-    defaults: { _controller: edgareztfa.sms.controller.auth_form:checkAction }

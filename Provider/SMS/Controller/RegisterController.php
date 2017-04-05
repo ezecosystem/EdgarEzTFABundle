@@ -12,7 +12,6 @@ use EdgarEz\TFABundle\Repository\TFARepository;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
@@ -23,9 +22,6 @@ class RegisterController extends Controller
 
     /** @var TokenStorage $tokenStorage */
     protected $tokenStorage;
-
-    /** @var \Doctrine\Common\Persistence\ObjectManager|object $entityManager */
-    protected $entityManager;
 
     /** @var TFARepository $tfaRepository */
     protected $tfaRepository;
@@ -46,9 +42,9 @@ class RegisterController extends Controller
         $this->configResolver = $configResolver;
         $this->tokenStorage = $tokenStorage;
 
-        $this->entityManager = $doctrineRegistry->getManager();
-        $this->tfaRepository = $this->entityManager->getRepository('EdgarEzTFABundle:TFA');
-        $this->tfaSMSPhoneRepository = $this->entityManager->getRepository('EdgarEzTFABundle:TFASMSPhone');
+        $entityManager = $doctrineRegistry->getManager();
+        $this->tfaRepository = $entityManager->getRepository('EdgarEzTFABundle:TFA');
+        $this->tfaSMSPhoneRepository = $entityManager->getRepository('EdgarEzTFABundle:TFASMSPhone');
 
         $this->provider = $provider;
     }
@@ -67,19 +63,12 @@ class RegisterController extends Controller
             $user = $this->tokenStorage->getToken()->getUser();
             $apiUser = $user->getAPIUser();
 
-            /** @var TFASMSPhone $userPhone */
-            $userPhone = $this->tfaSMSPhoneRepository->findOneByUserId($apiUser->id);
+            $tfaPhone = new TFASMSPhone();
+            $tfaPhone->setUserId($apiUser->id);
+            $tfaPhone->setPhone($data->phone);
 
-            if ($userPhone) {
-                $this->entityManager->remove($userPhone);
-                $this->entityManager->flush();
-            }
 
-            $this->tfaSMSPhoneRepository->savePhone($apiUser->id, $data->phone);
             $this->tfaRepository->setProvider($apiUser->id, $this->provider->getIdentifier());
-
-            $redirectUrl = $this->generateUrl('tfa_registered', ['provider' => $this->provider->getIdentifier()]);
-            return new RedirectResponse($redirectUrl);
         }
 
         return $this->render('EdgarEzTFABundle:tfa:sms/register.html.twig', [

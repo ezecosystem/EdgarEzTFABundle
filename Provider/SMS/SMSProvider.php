@@ -27,12 +27,12 @@ class SMSProvider extends ProviderAbstract implements ProviderInterface
     public function requestAuthCode(Request $request)
     {
         $session = $request->getSession();
+        $session->clear();
         $authCode = random_int(10000, 99999);
         $session->set('tfa_authcode', $authCode);
         $session->set('tfa_redirecturi', $request->getUri());
 
-        $siteaccessUrl = $this->getSiteaccessUrl($request);
-        $redirectUrl = $siteaccessUrl . '/_tfa/sms/auth';
+        $redirectUrl =  $this->router->generate('tfa_sms_auth_form');
 
         return $redirectUrl;
     }
