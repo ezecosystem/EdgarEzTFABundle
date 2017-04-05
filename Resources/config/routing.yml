@@ -17,6 +17,20 @@ tfa_registered:
     requirements:
         provider: "[a-z]+"
 
+tfa_reinitialize:
+    path: /reinitialize/{provider}
+    methods: [GET]
+    defaults: { _controller: edgareztfa_tfa_controller:reinitializeAction }
+    requirements:
+        provider: "[a-z]+"
+
+tfa_cancel:
+    path: /cancel/{provider}
+    methods: [GET]
+    defaults: { _controller: edgareztfa_tfa_controller:cancelAction }
+    requirements:
+        provider: "[a-z]+"
+
 tfa_provider_email:
     resource: "@EdgarEzTFABundle/Resources/config/routing_email.yml"
     prefix: /email

@@ -11,6 +11,7 @@ use EdgarEz\TFABundle\Security\AuthHandler;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class TFAController extends Controller
@@ -116,5 +117,29 @@ class TFAController extends Controller
             'layout' => $this->configResolver->getParameter('pagelayout'),
             'provider' => $provider
         ]);
+    }
+
+    public function reinitializeAction($provider)
+    {
+        $redirectUrl = $this->generateUrl('tfa_click', ['provider' => $provider]);
+        return new RedirectResponse($redirectUrl);
+    }
+
+    public function cancelAction($provider)
+    {
+        /** @var User $user */
+        $user = $this->tokenStorage->getToken()->getUser();
+        $apiUser = $user->getAPIUser();
+
+        /** @var TFA $userProvider */
+        $userProvider = $this->tfaRepository->findOneByUserId($apiUser->id);
+
+        if ($userProvider && $userProvider->getProvider() == $provider) {
+            $this->entityManager->remove($userProvider);
+            $this->entityManager->flush();
+        }
+
+        $redirectUrl = $this->generateUrl('tfa_list');
+        return new RedirectResponse($redirectUrl);
     }
 }

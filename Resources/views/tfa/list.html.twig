@@ -4,6 +4,10 @@
     {% for providerId, provider in providersList %}
         {% if provider.selected %}
             {{ provider.title }}
+            <p>
+                <a href="{{ path('tfa_reinitialize', {'provider': providerId}) }}">Reinitialize</a>
+                <a href="{{ path('tfa_cancel', {'provider': providerId}) }}">Cacncel</a>
+            </p>
         {% else %}
             <a href="{{ path('tfa_click', {'provider': providerId}) }}">{{ provider.title }}</a>
         {% endif %}

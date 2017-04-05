@@ -12,7 +12,7 @@ use EdgarEz\TFABundle\Entity\TFASMSPhone;
  */
 class TFASMSPhoneRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function setPhone($userId, $phone)
+    public function savePhone($userId, $phone)
     {
         $tfaSMSPhone = new TFASMSPhone();
         $tfaSMSPhone->setUserId($userId);
