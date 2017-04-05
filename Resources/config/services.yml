@@ -25,7 +25,8 @@ services:
     edgareztfa.security.auth_handler:
         class: %edgareztfa.security.auth_handler.class%
         arguments:
-            - $provider;edgar_ez_tfa$
+            - @security.token_storage
+            - @doctrine
 
     edgareztfa.listener:
         class: %edgareztfa.listener.class%
@@ -71,4 +72,5 @@ services:
             - @ezpublish.config.resolver
             - @translator
             - $providers;edgar_ez_tfa$
+            - @doctrine
         parent: ezpublish.controller.base

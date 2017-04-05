@@ -2,9 +2,13 @@
 
 namespace EdgarEz\TFABundle\Security;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use EdgarEz\TFABundle\Entity\TFA;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use EdgarEz\TFABundle\Repository\TFARepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use eZ\Publish\Core\MVC\Symfony\Security\User;
 
 /**
  * Class AuthHandler
@@ -15,16 +19,19 @@ class AuthHandler implements ProviderInterface
     /** @var ProviderInterface[] $providers */
     private $providers = array();
 
-    /** @var string $providerAlias */
-    protected $providerAlias;
+    /** @var TokenStorage $tokenStorage */
+    protected $tokenStorage;
 
-    /**
-     * AuthHandler constructor.
-     * @param string $providerAlias
-     */
-    public function __construct($providerAlias = '')
-    {
-        $this->providerAlias = $providerAlias;
+    protected $tfaRepository;
+
+    public function __construct(
+        TokenStorage $tokenStorage,
+        Registry $doctrineRegistry
+    ) {
+        $this->tokenStorage = $tokenStorage;
+
+        $entityManager = $doctrineRegistry->getManager();
+        $this->tfaRepository = $entityManager->getRepository('EdgarEzTFABundle:TFA');
     }
 
     /**
@@ -47,10 +54,11 @@ class AuthHandler implements ProviderInterface
      */
     public function isAuthenticated(Request $request)
     {
-        if (!isset($this->providers[$this->providerAlias]))
+        $providerAlias = $this->getProviderAlias();
+        if (!isset($this->providers[$providerAlias]))
             return true;
 
-        return $this->providers[$this->providerAlias]->isAuthenticated($request);
+        return $this->providers[$providerAlias]->isAuthenticated($request);
     }
 
     /**
@@ -59,10 +67,26 @@ class AuthHandler implements ProviderInterface
      */
     public function requestAuthCode(Request $request)
     {
-        if (!isset($this->providers[$this->providerAlias]))
+        $providerAlias = $this->getProviderAlias();
+        if (!isset($this->providers[$providerAlias]))
             return false;
 
-        return $this->providers[$this->providerAlias]->requestAuthCode($request);
+        return $this->providers[$providerAlias]->requestAuthCode($request);
+    }
+
+    protected function getProviderAlias()
+    {
+        /** @var User $user */
+        $user = $this->tokenStorage->getToken()->getUser();
+        if (!($user instanceof User))
+            return false;
+        $apiUser = $user->getAPIUser();
+
+
+        /** @var TFA $userProvider */
+        $userProvider = $this->tfaRepository->findOneByUserId($apiUser->id);
+
+        return ($userProvider) ? $userProvider->getProvider() : false;
     }
 
     public function register(TFARepository $tfaRepository, $userId, $provider)

@@ -2,6 +2,8 @@
 
 namespace EdgarEz\TFABundle\Provider\SMS\Controller;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use EdgarEz\TFABundle\Entity\TFASMSPhone;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
 use eZ\Publish\Core\FieldType\TextLine\Value;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -26,6 +28,9 @@ class AuthController extends Controller
     /** @var array $providers */
     public $providers;
 
+    /** @var \Doctrine\Common\Persistence\ObjectRepository|\EdgarEz\TFABundle\Repository\TFASMSPhoneRepository $tfaSMSPhoneRepository */
+    protected $tfaSMSPhoneRepository;
+
     /**
      * AuthController constructor.
      *
@@ -35,12 +40,16 @@ class AuthController extends Controller
         TokenStorage $tokenStorage,
         ConfigResolverInterface $configResolver,
         TranslatorInterface $translator,
-        array $providers
+        array $providers,
+        Registry $doctrineRegistry
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->configResolver = $configResolver;
         $this->translator = $translator;
         $this->providers = $providers;
+
+        $entityManager = $doctrineRegistry->getManager();
+        $this->tfaSMSPhoneRepository = $entityManager->getRepository('EdgarEzTFABundle:TFASMSPhone');
     }
 
     /**
@@ -57,13 +66,13 @@ class AuthController extends Controller
         /** @var User $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $apiUser = $user->getAPIUser();
-        /** @var Value $phoneNumberValue */
-        $phoneNumberValue = $apiUser->getField('phone_number')->value;
-        $phoneNumber = $phoneNumberValue->text;
+
+        /** @var TFASMSPhone $userPhone */
+        $userPhone = $this->tfaSMSPhoneRepository->findOneByUserId($apiUser->id);
 
         $codeSended = $session->get('tfa_codesended', false);
         if (!$codeSended) {
-            $this->sendCode($code, $phoneNumber);
+            $this->sendCode($code, $userPhone->getPhone());
             $session->set('tfa_codesended', true);
         }
 
@@ -85,7 +94,7 @@ class AuthController extends Controller
             $this->providers['sms']['application_key'],
             $this->providers['sms']['application_secret'],
             $endpoint,
-            $this->providers['sms']['customer_key']
+            $this->providers['sms']['consumer_key']
         );
 
         $message = $this->renderView(

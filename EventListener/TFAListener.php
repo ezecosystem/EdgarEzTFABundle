@@ -74,8 +74,6 @@ class TFAListener implements EventSubscriberInterface
         if (!$token)
             return;
 
-        return;
-
         if (!$this->authHandler->isAuthenticated($request)) {
             $redirectUrl = $this->authHandler->requestAuthCode($request);
 

@@ -22,7 +22,6 @@ class Configuration extends SiteAccessConfiguration
 
         $systemNode = $this->generateScopeBaseNode($rootNode);
         $systemNode
-            ->scalarNode('provider')->isRequired()->end()
             ->arrayNode('providers')
                 ->prototype('array')
                     ->prototype('scalar')->end()
