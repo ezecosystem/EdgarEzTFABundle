@@ -4,6 +4,7 @@ namespace EdgarEz\TFABundle\Provider;
 
 use EdgarEz\TFABundle\Repository\TFARepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class ProviderAbstract
@@ -12,16 +13,17 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProviderAbstract
 {
-    /**
-     * Test if user is TFA authenticated
-     *
-     * @param Request $request
-     * @return boolean true|false if authenticated
-     */
-    public function isAuthenticated(Request $request)
+    /** @var Session $session */
+    protected $session;
+
+    public function __construct(Session $session)
     {
-        $session = $request->getSession();
-        return $session->get('tfa_authenticated', false);
+        $this->session = $session;
+    }
+
+    public function isAuthenticated()
+    {
+        return $this->session->get('tfa_authenticated', false);
     }
 
     /**

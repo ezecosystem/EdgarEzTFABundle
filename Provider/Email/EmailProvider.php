@@ -5,6 +5,7 @@ namespace EdgarEz\TFABundle\Provider\Email;
 use EdgarEz\TFABundle\Provider\ProviderAbstract;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class EmailProvider
@@ -20,10 +21,9 @@ class EmailProvider extends ProviderAbstract implements ProviderInterface
      */
     public function requestAuthCode(Request $request)
     {
-        $session = $request->getSession();
         $authCode = random_int(10000, 99999);
-        $session->set('tfa_authcode', $authCode);
-        $session->set('tfa_redirecturi', $request->getUri());
+        $this->session->set('tfa_authcode', $authCode);
+        $this->session->set('tfa_redirecturi', $request->getUri());
 
         $siteaccessUrl = $this->getSiteaccessUrl($request);
         $redirectUrl = $siteaccessUrl . '/_tfa/email/auth';

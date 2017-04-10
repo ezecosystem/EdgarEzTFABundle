@@ -6,14 +6,13 @@ parameters:
     edgareztfa.sms.controller.auth_form.class: EdgarEz\TFABundle\Provider\SMS\Controller\AuthController
     edgareztfa.listener.class: EdgarEz\TFABundle\EventListener\TFAListener
     edgareztfa.security.auth_handler.class: EdgarEz\TFABundle\Security\AuthHandler
-
     edgareztfa_tfa_controller.class: EdgarEz\TFABundle\Controller\TFAController
-
-    edgareztfa.security.sms.logouthandler.class: EdgarEz\TFABundle\Provider\SMS\Service\LogoutHandler
 
 services:
     edgareztfa.provider.email:
         class: %edgareztfa.provider.email.class%
+        arguments:
+            - @session
         tags:
             - { name: edgareztfa.provider, alias: email }
 
@@ -21,7 +20,7 @@ services:
         class: %edgareztfa.provider.sms.class%
         arguments:
             - @hautelook.router.template
-            - @logger
+            - @session
         tags:
             - { name: edgareztfa.provider, alias: sms }
 
@@ -37,7 +36,6 @@ services:
             - @security.token_storage
             - @security.access.decision_manager
             - @edgareztfa.security.auth_handler
-            - @logger
         tags:
             - { name: kernel.event_subscriber }
 
@@ -67,6 +65,7 @@ services:
             - @security.token_storage
             - @doctrine
             - @edgareztfa.provider.sms
+            - @session
         parent: ezpublish.controller.base
 
     edgareztfa.sms.controller.auth_form:
@@ -77,7 +76,5 @@ services:
             - @translator
             - $providers;edgar_ez_tfa$
             - @doctrine
+            - @session
         parent: ezpublish.controller.base
-
-    edgareztfa.security.sms.logouthandler:
-        class: %edgareztfa.security.sms.logouthandler.class%

@@ -7,6 +7,7 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -31,6 +32,9 @@ class AuthController extends Controller
     /** @var array $providers */
     public $providers;
 
+    /** @var Session $session */
+    protected $session;
+
     /**
      * AuthController constructor.
      *
@@ -41,13 +45,16 @@ class AuthController extends Controller
         ConfigResolverInterface $configResolver,
         \Swift_Mailer $mailer,
         TranslatorInterface $translator,
-        array $providers
+        array $providers,
+        Session $session
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->configResolver = $configResolver;
         $this->mailer = $mailer;
         $this->translator = $translator;
         $this->providers = $providers;
+
+        $this->session = $session;
     }
 
     /**
@@ -58,18 +65,17 @@ class AuthController extends Controller
      */
     public function authAction(Request $request)
     {
-        $session = $request->getSession();
-        $code = $session->get('tfa_authcode', false);
+        $code = $this->session->get('tfa_authcode', false);
 
         /** @var User $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $emailTo = $user->getAPIUser()->email;
         $emailFrom = $this->providers['email']['from'];
 
-        $codeSended = $session->get('tfa_codesended', false);
+        $codeSended = $this->session->get('tfa_codesended', false);
         if (!$codeSended) {
             $this->sendCode($code, $emailFrom, $emailTo);
-            $session->set('tfa_codesended', true);
+            $this->session->set('tfa_codesended', true);
         }
 
         return $this->render('EdgarEzTFABundle:tfa:email/auth.html.twig', [
@@ -85,15 +91,14 @@ class AuthController extends Controller
      */
     public function checkAction(Request $request)
     {
-        $session = $request->getSession();
         $code = null;
 
-        $TFACode = $session->get('tfa_authcode', false);
+        $TFACode = $this->session->get('tfa_authcode', false);
         $code = $request->get('code');
 
         if ($code && $code == $TFACode) {
-            $session->set('tfa_authenticated', true);
-            return new RedirectResponse($session->get('tfa_redirecturi'));
+            $this->session->set('tfa_authenticated', true);
+            return new RedirectResponse($this->session->get('tfa_redirecturi'));
         } else {
             return $this->redirectToRoute('tfa_email_auth_form');
         }

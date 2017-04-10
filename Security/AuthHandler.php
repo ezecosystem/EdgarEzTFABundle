@@ -52,13 +52,13 @@ class AuthHandler implements ProviderInterface
      * @param Request $request
      * @return bool
      */
-    public function isAuthenticated(Request $request)
+    public function isAuthenticated()
     {
         $providerAlias = $this->getProviderAlias();
         if (!isset($this->providers[$providerAlias]))
             return true;
 
-        return $this->providers[$providerAlias]->isAuthenticated($request);
+        return $this->providers[$providerAlias]->isAuthenticated();
     }
 
     /**

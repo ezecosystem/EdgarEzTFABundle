@@ -18,7 +18,7 @@ interface ProviderInterface
 
     public function getDescription();
 
-    public function isAuthenticated(Request $request);
+    public function isAuthenticated();
 
     public function requestAuthCode(Request $request);
 

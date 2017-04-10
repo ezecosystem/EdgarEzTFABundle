@@ -3,8 +3,6 @@
 namespace EdgarEz\TFABundle\EventListener;
 
 use EdgarEz\TFABundle\Security\AuthHandler;
-use eZ\Publish\Core\MVC\Symfony\MVCEvents;
-use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -27,8 +25,6 @@ class TFAListener implements EventSubscriberInterface
     /** @var AuthHandler $authHandler */
     protected $authHandler;
 
-    protected $logger;
-
     /**
      * TFAListener constructor.
      *
@@ -39,13 +35,11 @@ class TFAListener implements EventSubscriberInterface
     public function __construct(
         TokenStorage $tokenStorage,
         AccessDecisionManagerInterface $accessDecisionManager,
-        AuthHandler $authHandler,
-        Logger $logger
+        AuthHandler $authHandler
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->accessDecisionManager = $accessDecisionManager;
         $this->authHandler = $authHandler;
-        $this->logger = $logger;
     }
 
     /**
@@ -79,17 +73,17 @@ class TFAListener implements EventSubscriberInterface
         if (!$token)
             return;
 
-        $this->logger->info('ZZZ 01 onRequest uri : ' . $request->getUri());
-
-        if (!$this->authHandler->isAuthenticated($request)) {
-            $this->logger->info('ZZZ 02 user not authenticated by the tfa provider');
-
+        if (!$this->authHandler->isAuthenticated()) {
             $redirectUrl = $this->authHandler->requestAuthCode($request);
 
             if ($redirectUrl) {
                 $event->setController(
                     function () use ($redirectUrl) {
-                        return new RedirectResponse($redirectUrl);
+                        return new RedirectResponse(
+                            $redirectUrl,
+                            302,
+                            ['Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
+                        );
                     }
                 );
             }
