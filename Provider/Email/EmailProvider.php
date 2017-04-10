@@ -5,7 +5,6 @@ namespace EdgarEz\TFABundle\Provider\Email;
 use EdgarEz\TFABundle\Provider\ProviderAbstract;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class EmailProvider
