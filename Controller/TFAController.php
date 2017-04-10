@@ -6,7 +6,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use EdgarEz\TFABundle\Entity\TFA;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use EdgarEz\TFABundle\Repository\TFARepository;
-use EdgarEz\TFABundle\Repository\TFATrustedRepository;
 use EdgarEz\TFABundle\Security\AuthHandler;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -34,9 +33,6 @@ class TFAController extends Controller
     /** @var TFARepository $tfaRepository */
     protected $tfaRepository;
 
-    /** @var TFATrustedRepository $tfaTrustedRepository */
-    protected $tfaTrustedRepository;
-
     public function __construct(
         TokenStorage $tokenStorage,
         ConfigResolverInterface $configResolver,
@@ -52,7 +48,6 @@ class TFAController extends Controller
 
         $this->entityManager = $doctrineRegistry->getManager();
         $this->tfaRepository = $this->entityManager->getRepository('EdgarEzTFABundle:TFA');
-        $this->tfaTrustedRepository = $this->entityManager->getRepository('EdgarEzTFABundle:TFA');
     }
 
     public function listAction()

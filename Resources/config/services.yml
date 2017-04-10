@@ -9,6 +9,8 @@ parameters:
 
     edgareztfa_tfa_controller.class: EdgarEz\TFABundle\Controller\TFAController
 
+    edgareztfa.security.sms.logouthandler.class: EdgarEz\TFABundle\Provider\SMS\Service\LogoutHandler
+
 services:
     edgareztfa.provider.email:
         class: %edgareztfa.provider.email.class%
@@ -76,3 +78,6 @@ services:
             - $providers;edgar_ez_tfa$
             - @doctrine
         parent: ezpublish.controller.base
+
+    edgareztfa.security.sms.logouthandler:
+        class: %edgareztfa.security.sms.logouthandler.class%

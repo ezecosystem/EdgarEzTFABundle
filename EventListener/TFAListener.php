@@ -79,7 +79,7 @@ class TFAListener implements EventSubscriberInterface
         if (!$token)
             return;
 
-        $this->logger->info('ZZZ 01 onRequest');
+        $this->logger->info('ZZZ 01 onRequest uri : ' . $request->getUri());
 
         if (!$this->authHandler->isAuthenticated($request)) {
             $this->logger->info('ZZZ 02 user not authenticated by the tfa provider');
