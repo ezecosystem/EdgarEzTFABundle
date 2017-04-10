@@ -3,7 +3,8 @@
 namespace EdgarEz\TFABundle\EventListener;
 
 use EdgarEz\TFABundle\Security\AuthHandler;
-use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute;
+use eZ\Publish\Core\MVC\Symfony\MVCEvents;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -26,6 +27,8 @@ class TFAListener implements EventSubscriberInterface
     /** @var AuthHandler $authHandler */
     protected $authHandler;
 
+    protected $logger;
+
     /**
      * TFAListener constructor.
      *
@@ -36,11 +39,13 @@ class TFAListener implements EventSubscriberInterface
     public function __construct(
         TokenStorage $tokenStorage,
         AccessDecisionManagerInterface $accessDecisionManager,
-        AuthHandler $authHandler
+        AuthHandler $authHandler,
+        Logger $logger
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->accessDecisionManager = $accessDecisionManager;
         $this->authHandler = $authHandler;
+        $this->logger = $logger;
     }
 
     /**
@@ -74,7 +79,11 @@ class TFAListener implements EventSubscriberInterface
         if (!$token)
             return;
 
+        $this->logger->info('ZZZ 01 onRequest');
+
         if (!$this->authHandler->isAuthenticated($request)) {
+            $this->logger->info('ZZZ 02 user not authenticated by the tfa provider');
+
             $redirectUrl = $this->authHandler->requestAuthCode($request);
 
             if ($redirectUrl) {

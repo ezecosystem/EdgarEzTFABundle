@@ -29,8 +29,9 @@ class RegisterType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+
         $resolver->setDefaults([
-            'data_class' => '\EdgarEz\TFABundle\Provider\SMS\Values\RegisterStruct',
+            'data_class' => 'EdgarEz\TFABundle\Entity\TFASMSPhone',
             'translation_domain' => 'edgareztfa_provider_sms',
         ]);
     }

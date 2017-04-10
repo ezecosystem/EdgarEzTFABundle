@@ -5,6 +5,7 @@ namespace EdgarEz\TFABundle\Provider\SMS;
 use EdgarEz\TFABundle\Provider\ProviderAbstract;
 use EdgarEz\TFABundle\Provider\ProviderInterface;
 use EdgarEz\TFABundle\Repository\TFARepository;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,9 +14,13 @@ class SMSProvider extends ProviderAbstract implements ProviderInterface
     /** @var Router $router */
     protected $router;
 
-    public function __construct(Router $router)
+    /** @var Logger $logger */
+    protected $logger;
+
+    public function __construct(Router $router, Logger $logger)
     {
         $this->router = $router;
+        $this->logger = $logger;
     }
 
     /**
@@ -27,10 +32,12 @@ class SMSProvider extends ProviderAbstract implements ProviderInterface
     public function requestAuthCode(Request $request)
     {
         $session = $request->getSession();
-        $session->clear();
         $authCode = random_int(10000, 99999);
         $session->set('tfa_authcode', $authCode);
         $session->set('tfa_redirecturi', $request->getUri());
+
+        $this->logger->info('ZZZ0 tfa_authcode : ' . $authCode);
+        $this->logger->info('ZZZ1 tfa_redirecturi : ' . $request->getUri());
 
         $redirectUrl =  $this->router->generate('tfa_sms_auth_form');
 

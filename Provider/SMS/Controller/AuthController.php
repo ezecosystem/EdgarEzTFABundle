@@ -4,11 +4,7 @@ namespace EdgarEz\TFABundle\Provider\SMS\Controller;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use EdgarEz\TFABundle\Entity\TFASMSPhone;
-use EdgarEz\TFABundle\Provider\SMS\Data\Mapper\AuthMapper;
-use EdgarEz\TFABundle\Provider\SMS\Form\Type\AuthType;
-use EdgarEz\TFABundle\Provider\SMS\Values\API\Auth;
 use eZ\Bundle\EzPublishCoreBundle\Controller;
-use eZ\Publish\Core\FieldType\TextLine\Value;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
 use Ovh\Api;
@@ -62,6 +58,8 @@ class AuthController extends Controller
      */
     protected function sendCode($code, $phoneNumber)
     {
+        $logger = $this->get('logger');
+
         $endpoint = 'ovh-eu';
 
         $smsConn = new Api(
@@ -91,35 +89,49 @@ class AuthController extends Controller
             "senderForResponse" => true,
             "validityPeriod" => 2880
         );
-        $smsConn->post('/sms/'. $smsServices[0] . '/jobs/', $content);
+        // $smsConn->post('/sms/'. $smsServices[0] . '/jobs/', $content);
+
+        $logger->info('ZZZ2 message sended : ' . $code);
     }
 
     public function authAction(Request $request)
     {
+        $logger = $this->get('logger');
+        $logger->info('ZZZ10  authAction');
+
         $actionUrl = $this->generateUrl('tfa_sms_auth_form');
 
-        $auth = new Auth();
-        $data = (new AuthMapper())->mapToFormData($auth);
-        $form = $this->createForm(AuthType::class, $data);
-
+        $form = $this->createForm('EdgarEz\TFABundle\Provider\SMS\Form\Type\AuthType');
         $form->handleRequest($request);
-        if ($form->isValid()) {
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $logger->info('ZZZ01 auth form valid');
+
             $session = $request->getSession();
             $code = null;
 
             $TFACode = $session->get('tfa_authcode', false);
-            $code = (int)$data->code;
+            $data = $form->getData();
+            $code = (int)$data['code'];
+
+            $logger->info('ZZZ02 $TFACode : ' . $TFACode);
+            $logger->info('ZZZ03 $code : ' . $code);
 
             if ($code !== $TFACode) {
+                $logger->info('ZZZ04 code !== TFACode');
                 return $this->redirectToRoute('tfa_sms_auth_form');
             }
 
             $session->set('tfa_authenticated', true);
+            $logger->info('ZZZ05 set session tfa_authenticated');
+            $logger->info('ZZZ06 redirect to : ' . $session->get('tfa_redirecturi'));
             return new RedirectResponse($session->get('tfa_redirecturi'));
         }
 
         $session = $request->getSession();
         $code = $session->get('tfa_authcode', false);
+
+        $logger->info('ZZZ11 code in session : ' . $code);
 
         /** @var User $user */
         $user = $this->tokenStorage->getToken()->getUser();
@@ -130,6 +142,8 @@ class AuthController extends Controller
 
         $codeSended = $session->get('tfa_codesended', false);
         if (!$codeSended) {
+            $logger->info('ZZZ12 code not already sended');
+
             $this->sendCode($code, $userPhone->getPhone());
             $session->set('tfa_codesended', true);
         }
@@ -137,7 +151,6 @@ class AuthController extends Controller
         return $this->render('EdgarEzTFABundle:tfa:sms/auth.html.twig', [
             'layout' => $this->configResolver->getParameter('pagelayout'),
             'form' => $form->createView(),
-            'auth' => $data,
             'actionUrl' => $actionUrl
         ]);
     }
