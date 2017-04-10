@@ -48,7 +48,6 @@ Two providers are natively available:
 edgar_ez_tfa:
     system:
         acme_site: # TFA is activated only for this siteaccess
-            provider: email # TFA provider type
             providers:
                 email:
                     from: no-spam@your.mail # email provider sender mail
@@ -70,7 +69,6 @@ https://api.ovh.com/createToken/
 edgar_ez_tfa:
     system:
         acme_site: # TFA is activated only for this siteaccess
-            provider: sms # TFA provider type
             providers:
                 sms:
                     application_key: <ovh_application_key>
@@ -91,6 +89,4 @@ tfa_auth:
     prefix:   /_tfa
 ```
 
-## Role and policy
 
-To enable TFA for your users, add policy tfa/* to user or role
